@@ -1,4 +1,4 @@
-// /api/chat.js - Vercel Serverless API
+// /api/chat.js - Vercel Serverless Function
 export default async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -17,35 +17,25 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': Bearer ${process.env.DEEPSEEK_KEY}
+        'Authorization': `Bearer ${process.env.DEEPSEEK_KEY}`
       },
       body: JSON.stringify({
         model: "deepseek-chat",
         messages: [
           {
             role: "system",
-            content: "You are a tutor for South African CAPS curriculum. " +
-                     "Provide clear, grade-appropriate explanations with local examples."
+            content: "You are a tutor for South African CAPS curriculum."
           },
           ...messages
         ],
-        temperature: 0.7,
-        max_tokens: 1000
+        temperature: 0.7
       })
     });
-
-    if (!response.ok) {
-      throw new Error(DeepSeek API error: ${response.status});
-    }
 
     const data = await response.json();
     res.status(200).json(data);
     
   } catch (error) {
-    console.error('API Error:', error);
-    res.status(500).json({ 
-      error: "Failed to get AI response",
-      details: process.env.NODE_ENV === 'development' ? error.message : null
-    });
+    res.status(500).json({ error: "AI service unavailable" });
   }
 }
